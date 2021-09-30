@@ -2,6 +2,7 @@ titleOnly: true
 types:
   - deps
   - improve
+  - ops
   - tests       # plural form of the default "test"
   # defaults
   - feat
