@@ -1,5 +1,6 @@
 # https://www.notion.so/prismaio/Prisma-Development-Slack-App-49969876d7a1449991336ed2e5c1e87c
 name: Slack Deployment Message
+
 on:
   workflow_call:
     secrets:
@@ -7,14 +8,18 @@ on:
         required: true
       vercelToken:
         required: true
+
 jobs:
   run:
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: prisma/.github/.github/workflows/print-environment.yml
       - name: Install pcregrep
         run: sudo apt-get install -y pcregrep        
+      - name: Print GitHub Context Data 🖨
+        run: echo '${{toJson(github)}}' | jq --color-output
+      - name: Print GitHub Environment variables 🖨
+        run: npx @bahmutov/print-env GITHUB
       - name: Build Slack Payload
         run: |
           echo "Get Commit Info:"
