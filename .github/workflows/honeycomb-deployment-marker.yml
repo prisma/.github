@@ -17,7 +17,7 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/print-environment.yml
+      - uses: prisma/.github/.github/workflows/print-environment.yml
       - name: Create Honeycomb Marker
         run: |
           if [[ "${{github.event.deployment_status.environment}}" = "Production" ]]; then

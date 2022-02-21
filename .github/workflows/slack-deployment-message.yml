@@ -12,7 +12,7 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/print-environment.yml
+      - uses: prisma/.github/.github/workflows/print-environment.yml
       - name: Install pcregrep
         run: sudo apt-get install -y pcregrep        
       - name: Build Slack Payload
