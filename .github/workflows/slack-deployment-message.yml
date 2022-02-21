@@ -14,12 +14,12 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Install pcregrep
-        run: sudo apt-get install -y pcregrep        
       - name: Print GitHub Context Data 🖨
         run: echo '${{toJson(github)}}' | jq --color-output
       - name: Print GitHub Environment variables 🖨
         run: npx @bahmutov/print-env GITHUB
+      - name: Install pcregrep
+        run: sudo apt-get install -y pcregrep        
       - name: Build Slack Payload
         run: |
           echo "Get Commit Info:"
