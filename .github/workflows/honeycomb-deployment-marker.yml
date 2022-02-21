@@ -1,0 +1,49 @@
+name: Honeycomb Deployment Marker
+on:
+  workflow_call:
+    inputs:
+      dataset: 
+        type: string
+        required: true
+    secrets:
+      honeycombTeamApiKey:
+        required: true
+      # TODO make this optional
+      # Then only attach Vercel deployment inspection URL when supplied
+      vercelToken:
+        required: true
+jobs:
+  run:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: prisma/.github/.github/workflows/print-environment.yml
+      - name: Create Honeycomb Marker
+        run: |
+          if [[ "${{github.event.deployment_status.environment}}" = "Production" ]]; then
+            dataset="${{inputs.dataset}}"
+          else
+            dataset="${{inputs.dataset}}-preview"
+          fi
+
+          # We cut away the `https://` to get the hostname
+          deployment_hostname=$(echo ${{github.event.deployment_status.target_url}} | cut -c 9-)
+
+          read deployment_url created ready < <(echo $(curl --silent https://api.vercel.com/v12/now/deployments/get?url=${deployment_hostname} -H "Authorization: Bearer ${{secrets.vercelToken}}" | jq -r ".inspectorUrl,.createdAt,.ready"))
+
+          echo "Did get Vercel deployment information"
+
+          created_formatted=$(echo $created | cut -c 1-10)
+          ready_formatted=$(echo $ready | cut -c 1-10)
+
+          data="{ \"type\": \"deploy\", \"message\": \"Deploy of SHA ${{github.event.deployment.sha}}\", \"start_time\": ${created_formatted}, \"end_time\": ${ready_formatted}, \"url\": \"${deployment_url}\" }"
+
+          curl https://api.honeycomb.io/1/markers/${dataset} \
+            --fail \
+            --silent \
+            --show-error \
+            -X POST \
+            -H "X-Honeycomb-Team: ${{secrets.honeycombTeamApiKey}}" \
+            -d "${data}"
+
+          echo "Did create a Honeycomb marker"

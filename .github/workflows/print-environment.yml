@@ -1,0 +1,11 @@
+name: Print Environment
+on:
+  - workflow_call
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print GitHub Context Data 🖨
+        run: echo '${{toJson(github)}}' | jq --color-output
+      - name: Print GitHub Environment variables 🖨
+        run: npx @bahmutov/print-env GITHUB
