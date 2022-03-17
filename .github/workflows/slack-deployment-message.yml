@@ -53,17 +53,41 @@ jobs:
           echo $deployment_info | jq --color-output
 
           echo "build various values"
+
+          echo "build commit_author_display_name"
           commit_author_display_name=$(echo "$commit_info" | jq -r '.commit.author.name')
+          echo "commit_author_display_name="$commit_author_display_name""
+
+          echo "build commit_author_login"
           commit_author_login=$(echo "$commit_info" | jq -r '.author.login')
+          echo "commit_author_login="$commit_author_login""
+
+          echo "build commit_message"
           commit_message=$(echo "$commit_info" | jq -r '.commit.message')
+          echo "commit_message="$commit_message""
+
+          echo "build commit_sha_short"
           commit_sha_short=$(echo '${{github.event.deployment.sha}}' | cut -c-7)
+          echo "commit_sha_short="$commit_sha_short""
+
+          echo "build commit_ref"
           commit_ref=$(echo $commit_ref | jq -r ".meta.githubCommitRef")
+          echo "commit_ref="$commit_ref""
+
+          echo "build commit_pr_number"
           commit_pr_number=$(echo $deployment_info | jq -r ".meta.githubPrId")
           if [ "${commit_pr_number}" == "null" ]; then
             commit_pr_number=$(echo "$commit_message" | pcregrep --only-matching=1 '^[^\n]+\(#(\d+)\)')
           fi
+          echo "commit_pr_number="$commit_pr_number""
+
+          echo "build app_name"
           app_name=$(echo $deployment_info | jq -r ".name")
+          echo "app_name="$app_name""
+
+          echo "build vercel_inspector_url"
           vercel_inspector_url=$(echo $deployment_info | jq -r ".inspectorUrl")
+          echo "vercel_inspector_url="$vercel_inspector_url""
 
           if [ '${{github.event.deployment_status.environment}}' == "Production" ]; then
             #feed-pdp-deployments
@@ -73,7 +97,7 @@ jobs:
             slack_channel='C033EL7UMS6'
           fi
 
-          echo "build slack text value"
+          echo "build slack_text"
           slack_text=$(cat <<EOF
             🚀  *${app_name}*
             Commit <https://github.com/${{github.repository}}/commit/${{github.event.deployment.sha}}|${commit_sha_short}> by <https://github.com/${commit_author_login}|${commit_author_display_name}> from pull request <https://github.com/${{github.repository}}/pull/${commit_pr_number}|#${commit_pr_number}> was successfully deployed.
@@ -83,7 +107,7 @@ jobs:
           EOF
           )
 
-          echo "build slack payload value"
+          echo "build slack_payload"
           slack_payload=$(jq \
             --null-input \
             --arg slack_channel "$slack_channel" \
@@ -100,16 +124,6 @@ jobs:
             ' \
           )
           echo "slack_payload="$slack_payload"" >> $GITHUB_ENV
-
-          echo "print built values"
-          echo "commit_author_display_name="$commit_author_display_name""
-          echo "commit_author_login="$commit_author_login""
-          echo "commit_message="$commit_message""
-          echo "commit_pr_number="$commit_pr_number""
-          echo "commit_sha_short="$commit_sha_short""
-          echo "commit_ref="$commit_ref""
-          echo "app_name="$app_name""
-          echo "vercel_inspector_url="$vercel_inspector_url""
           echo "$slack_payload" | jq --color-output
       - name: Write message to Slack channel
         run: |
