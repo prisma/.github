@@ -59,7 +59,7 @@ You can learn more about Prisma and its rich ecosystem and community with these 
 - [YouTube](https://www.youtube.com/watch?v=acvjE2EpMbs&ab_channel=Prisma): Video walkthroughs, courses, livestreams, talks & workshops, ... 
 - [What's New in Prisma](https://www.youtube.com/playlist?list=PLn2e1F9Rfr6l1B9RP0A9NdX7i7QIWfBa7): Regular livestream with news about the Prisma ecosystem & community
 - [Prisma Day](https://www.prisma.io/day): Our yearly conference where the Prisma Community gets together
-- [Success Stories](https://prisma.io/showcase): Learn how people successfully use Prisma in production
+- [Success Stories](https://www.prisma.io/showcase): Learn how people successfully use Prisma in production
 
 
 </details>
