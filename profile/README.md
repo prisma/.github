@@ -22,7 +22,7 @@
 Prisma makes working with databases easy! Currently, we are building two main tools:
 
 - [Prisma ORM](https://github.com/prisma/prisma) (Node.js & TypeScript | PostgreSQL, MySQL, MariaDB, SQL Server, SQLite, CockroachDB & MongoDB)
-- [Prisma Data Platform](https://prisma.io/data-platform) for development teams and organizations
+- [Prisma Data Platform](https://www.prisma.io/data-platform) for development teams and organizations
 
 You can learn about upcoming Prisma features on the [roadmap](https://pris.ly/roadmap) and ask questions via [GitHub Discussions](https://github.com/prisma/prisma/discussions). The Prisma ORM is released every three weeks, you can learn more in the [release notes](https://github.com/prisma/prisma/releases).
 
