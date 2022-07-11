@@ -36,7 +36,7 @@ This GitHub organization contains repos that are _officially_ maintained by [Pri
 
 ## 💚 Community
 
-Please join the [Prisma Community](https://prisma.io/community), we're happy to have you here! 
+Please join the [Prisma Community](https://www.prisma.io/community), we're happy to have you here! 
 
 <details><summary>Get in touch with us or learn more about Prisma via any of the channels below.</summary>
 
