@@ -55,7 +55,7 @@ You can reach out to us via various channels:
 
 You can learn more about Prisma and its rich ecosystem and community with these resources:
 
-- [Prisma Blog](https://prisma.io/blog): Announcements, tutorials, in-depth articles & more
+- [Prisma Blog](https://www.prisma.io/blog): Announcements, tutorials, in-depth articles & more
 - [YouTube](https://www.youtube.com/watch?v=acvjE2EpMbs&ab_channel=Prisma): Video walkthroughs, courses, livestreams, talks & workshops, ... 
 - [What's New in Prisma](https://www.youtube.com/playlist?list=PLn2e1F9Rfr6l1B9RP0A9NdX7i7QIWfBa7): Regular livestream with news about the Prisma ecosystem & community
 - [Prisma Day](https://www.prisma.io/day): Our yearly conference where the Prisma Community gets together
