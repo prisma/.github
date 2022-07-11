@@ -12,7 +12,7 @@
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/prisma/prisma-examples/">Examples</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://prisma.io/data-platform">Prisma Data Platform</a>
+  <a href="https://www.prisma.io/data-platform">Prisma Data Platform</a>
   <br />
   <hr />
 </div>
