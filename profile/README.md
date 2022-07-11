@@ -29,7 +29,7 @@ You can learn about upcoming Prisma features on the [roadmap](https://pris.ly/ro
 
 ## 🎁 Repositories
 
-This GitHub organization contains repos that are _officially_ maintained by [Prisma](https://prisma.io):
+This GitHub organization contains repos that are _officially_ maintained by [Prisma](https://www.prisma.io):
 
 - The Prisma ORM can be found in the main [`prisma/prisma`](https://github.com/prisma/prisma) repo. 
 - The [documentation](https://prisma.io/docs) for the ORM and the Prisma Data Platform is in located the [`prisma/docs`](https://github.com/prisma/docs) repo.
