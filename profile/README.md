@@ -1,4 +1,4 @@
-![Prisma](https://i.imgur.com/h6UIYTu.png)
+![Prisma](https://imgur.com/hbpl9Z3.png)
 
 <div align="center">
   <h1>Prisma</h1>
@@ -60,7 +60,6 @@ You can learn more about Prisma and its rich ecosystem and community with these 
 - [What's New in Prisma](https://www.youtube.com/playlist?list=PLn2e1F9Rfr6l1B9RP0A9NdX7i7QIWfBa7): Regular livestream with news about the Prisma ecosystem & community
 - [Prisma Day](https://www.prisma.io/day): Our yearly conference where the Prisma Community gets together
 - [Success Stories](https://www.prisma.io/showcase): Learn how people successfully use Prisma in production
-
 
 </details>
 
