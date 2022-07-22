@@ -76,9 +76,11 @@ jobs:
 
           echo "build commit_pr_number"
           commit_pr_number=$(echo $deployment_info | jq -r ".meta.githubPrId")
-          if [ "${commit_pr_number}" == "null" ]; then
-            commit_pr_number=$(echo "$commit_message" | pcregrep --only-matching=1 '^[^\n]+\(#(\d+)\)')
+          
+          if [[ "${commit_pr_number}" == "null" ]]; then
+            unset commit_pr_number 
           fi
+          
           echo "commit_pr_number="$commit_pr_number""
 
           echo "build app_name"
@@ -97,10 +99,16 @@ jobs:
             slack_channel='C033EL7UMS6'
           fi
 
+          if [ -z $commit_pr_number ]; then
+            pull_request_slack_message_part="(not part of an open PR)"
+          else
+            pull_request_slack_message_part="from pull request <https://github.com/${{github.repository}}/pull/${commit_pr_number}|#${commit_pr_number}>"
+          fi
+          
           echo "build slack_text"
           slack_text=$(cat <<EOF
             🚀  *${app_name}*
-            Commit <https://github.com/${{github.repository}}/commit/${{github.event.deployment.sha}}|${commit_sha_short}> by <https://github.com/${commit_author_login}|${commit_author_display_name}> from pull request <https://github.com/${{github.repository}}/pull/${commit_pr_number}|#${commit_pr_number}> was successfully deployed.
+            Commit <https://github.com/${{github.repository}}/commit/${{github.event.deployment.sha}}|${commit_sha_short}> by <https://github.com/${commit_author_login}|${commit_author_display_name}> ${pull_request_slack_message_part} was successfully deployed.
             ${commit_message}
             →  <https://${deployment_hostname}|View Deployment>
             →  <${vercel_inspector_url}|Inspect deployment on Vercel>
