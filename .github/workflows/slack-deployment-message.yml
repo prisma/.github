@@ -100,7 +100,7 @@ jobs:
           fi
 
           if [ -z $commit_pr_number ]; then
-            pull_request_slack_message_part="without PR"
+            pull_request_slack_message_part="(not part of an open PR)"
           else
             pull_request_slack_message_part="from pull request <https://github.com/${{github.repository}}/pull/${commit_pr_number}|#${commit_pr_number}>"
           fi
