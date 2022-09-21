@@ -4,9 +4,9 @@ on:
   workflow_call:
     inputs:
       url:
-        description: URL of the deployment.
+        description: URL of the deployment. By default will take the URL from the fetched deployment info from the deployment provider (Vercel).
         type: string
-        required: true
+        required: false
       production:
         description: Is this a production deployment? If it is, a specific slack channel is used. By default is true when branch is trunk.
         type: boolean
@@ -47,17 +47,10 @@ jobs:
           )
           echo $commit_info | jq --color-output
 
-          # We cut away the `https://` to get the hostname
-          # In some cases, like act CLI, there is no HTTPS prefix.
-          if [[ '${{inputs.url}}' == https://* ]]; then
-            deploymentHostName=$(echo '${{inputs.url}}' | cut -c 9-)
-          else
-            deploymentHostName='${{inputs.url}}'
-          fi
-          echo "deploymentHostName="$deploymentHostName"" >> $GITHUB_ENV
-          echo "deploymentHostName=$deploymentHostName"
+
 
           # TODO Add support for other deployment types.
+          deploymentUrl=''
           if [ '${{secrets.vercelToken}}' != '' ]; then
             echo "Get Vercel Deployment Info:"
             deploymentInfo=$(curl \
@@ -79,7 +72,24 @@ jobs:
             echo "build deploymentInspectorUrl"
             deploymentInspectorUrl=$(echo $deploymentInfo | jq -r ".inspectorUrl")
             echo "deploymentInspectorUrl="$deploymentInspectorUrl""
+
+            echo "build deploymentUrl"
+            deploymentUrl=$(echo $deploymentInfo | jq -r ".url")
           fi
+
+          if [ '${{inputs.url}}'' != '' ]; then
+            deploymentUrl='${{inputs.url}}'
+          fi
+
+          # We cut away the `https://` to get the hostname
+          # In some cases, like act CLI, there is no HTTPS prefix.
+          if [[ "$deploymentUrl" == https://* ]]; then
+            deploymentHostName=$(echo "$deploymentUrl" | cut -c 9-)
+          else
+            deploymentHostName="$deploymentUrl"
+          fi
+          echo "deploymentHostName="$deploymentHostName"" >> $GITHUB_ENV
+          echo "deploymentHostName=$deploymentHostName"
 
           echo "build various values"
 
