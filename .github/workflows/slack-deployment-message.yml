@@ -133,8 +133,8 @@ jobs:
             pull_request_slack_message_part="from pull request <https://github.com/${{github.repository}}/pull/${commitPullRequestNumber}|#${commitPullRequestNumber}>"
           fi
           
-          echo "build slack_text"
-          slack_text=$(cat <<EOF
+          echo "build slackText"
+          slackText=$(cat <<EOF
             🚀  *${appName}*
             Commit <https://github.com/${{github.repository}}/commit/${{github.sha}}|${commit_sha_short}> by <https://github.com/${commit_author_login}|${commit_author_display_name}> ${pull_request_slack_message_part} was successfully deployed.
             ${commit_message}
@@ -143,24 +143,24 @@ jobs:
           EOF
           )
 
-          echo "build slack_payload"
-          slack_payload=$(jq \
+          echo "build slackPayload"
+          slackPayload=$(jq \
             --null-input \
             --arg slackChannel "$slackChannel" \
-            --arg slack_text "$slack_text" \
+            --arg slackText "$slackText" \
             '
               {
                 "channel": $slackChannel,
                 "unfurl_links": false,
                 "unfurl_media": false,
                 "blocks": [
-                  { "type": "section", "text": { "type": "mrkdwn", "text": $slack_text }}
+                  { "type": "section", "text": { "type": "mrkdwn", "text": $slackText }}
                 ]
               }
             ' \
           )
-          echo "slack_payload="$slack_payload"" >> $GITHUB_ENV
-          echo "$slack_payload" | jq --color-output
+          echo "SLACK_PAYLOAD="$slackPayload"" >> $GITHUB_ENV
+          echo "$slackPayload" | jq --color-output
       - name: Write message to Slack channel
         run: |
           curl \
@@ -169,5 +169,5 @@ jobs:
             --request POST \
             --header "Content-type: application/json" \
             --header "Authorization: Bearer ${{secrets.slackToken}}" \
-            --data '${{env.slack_payload}}' \
+            --data '${{env.SLACK_PAYLOAD}}' \
             https://slack.com/api/chat.postMessage | jq --color-output
