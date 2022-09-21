@@ -51,9 +51,12 @@ jobs:
 
           # We cut away the `https://` to get the hostname
           # In some cases, like act CLI, there is no HTTPS prefix.
+          echo 'inputs.url = ${{inputs.url}}'
+          deploymentHostName=''
           if [[ '${{inputs.url}}' == https://* ]]; then
             echo "inputs.url has https prefix"
             deploymentHostName=$(echo '${{inputs.url}}' | cut -c 9-)
+            echo $deploymentHostName
           else
             echo "inputs.url has no https prefix"
             deploymentHostName='${{inputs.url}}'
