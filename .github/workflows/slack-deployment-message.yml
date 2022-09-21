@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print GitHub Context Data 🖨
-        run: echo '${{toJson(github)}}' | jq --color-output
+        run: echo '${{toJson(github)}}'
       - name: Print GitHub Environment variables 🖨
         run: npx @bahmutov/print-env GITHUB
       - name: Build Slack Payload
