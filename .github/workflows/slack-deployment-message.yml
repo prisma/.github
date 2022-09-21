@@ -1,27 +1,43 @@
 # https://www.notion.so/prismaio/Prisma-Development-Slack-App-49969876d7a1449991336ed2e5c1e87c
 name: Slack Deployment Message
-
 on:
   workflow_call:
+    inputs:
+      url:
+        description: URL of the deployment. By default will take the URL from the fetched deployment info from the deployment provider (Vercel).
+        type: string
+        required: false
+      production:
+        description: Is this a production deployment? If it is, a specific slack channel is used. By default is true when branch is trunk.
+        type: boolean
+        required: false
     secrets:
+      vercelToken:
+        description: The token to interact with the Vercel API to get deployment info. If given, the deployment is inferred to be a Vercel deployment.
+        required: false
       slackToken:
         required: true
-      vercelToken:
-        required: true
-
 jobs:
   run:
-    if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Print GitHub Context Data 🖨
         run: echo '${{toJson(github)}}' | jq --color-output
       - name: Print GitHub Environment variables 🖨
         run: npx @bahmutov/print-env GITHUB
-      - name: Install pcregrep
-        run: sudo apt-get install -y pcregrep        
       - name: Build Slack Payload
         run: |
+          # TODO get this from the repository default branch setting.
+          trunkBranchName='main'
+          if [ '${{inputs.production}}' == "true" ]; then
+            isProduction='true'
+          elif [ '${{github.ref}}' == "$trunkBranchName" ]; then
+            isProduction='true'
+          else
+            isProduction='false'
+          fi
+          echo "isProduction="$isProduction""
+          
           echo "Get Commit Info:"
           commit_info=$(curl \
             --silent \
@@ -29,28 +45,53 @@ jobs:
             --request GET \
             --header "accept: application/vnd.github.v3+json" \
             --header "authorization: Bearer ${{github.token}}" \
-            "https://api.github.com/repos/${{github.repository}}/commits/${{github.event.deployment.sha}}" \
+            "https://api.github.com/repos/${{github.repository}}/commits/${{github.sha}}" \
           )
           echo $commit_info | jq --color-output
 
+
+
+          # TODO Add support for other deployment types.
+          deploymentUrl=''
+          if [ '${{secrets.vercelToken}}' != '' ]; then
+            echo "Get Vercel Deployment Info:"
+            deploymentInfo=$(curl \
+              --silent \
+              --fail \
+              --header "authorization: Bearer ${{secrets.vercelToken}}" \
+              "https://api.vercel.com/v13/deployments/${deploymentHostName}" \
+            )
+            echo $deploymentInfo | jq --color-output
+
+            echo "build commitPullRequestNumber"
+            commitPullRequestNumber=$(echo $deploymentInfo | jq -r ".meta.githubPrId")
+            echo "commitPullRequestNumber="$commitPullRequestNumber""
+
+            echo "build appName"
+            appName=$(echo $deploymentInfo | jq -r ".name")
+            echo "appName="$appName""
+
+            echo "build deploymentInspectorUrl"
+            deploymentInspectorUrl=$(echo $deploymentInfo | jq -r ".inspectorUrl")
+            echo "deploymentInspectorUrl="$deploymentInspectorUrl""
+
+            echo "build deploymentUrl"
+            deploymentUrl=$(echo $deploymentInfo | jq -r ".url")
+          fi
+
+          if [ '${{inputs.url}}'' != '' ]; then
+            deploymentUrl='${{inputs.url}}'
+          fi
+
           # We cut away the `https://` to get the hostname
           # In some cases, like act CLI, there is no HTTPS prefix.
-          if [[ '${{github.event.deployment_status.target_url}}' == https://* ]]; then
-            deployment_hostname=$(echo '${{github.event.deployment_status.target_url}}' | cut -c 9-)
+          if [[ "$deploymentUrl" == https://* ]]; then
+            deploymentHostName=$(echo "$deploymentUrl" | cut -c 9-)
           else
-            deployment_hostname='${{github.event.deployment_status.target_url}}'
+            deploymentHostName="$deploymentUrl"
           fi
-          echo "deployment_hostname="$deployment_hostname"" >> $GITHUB_ENV
-          echo "deployment_hostname=$deployment_hostname"
-
-          echo "Get Deployment Info:"
-          deployment_info=$(curl \
-            --silent \
-            --fail \
-            --header "authorization: Bearer ${{secrets.vercelToken}}" \
-            "https://api.vercel.com/v13/deployments/${deployment_hostname}" \
-          )
-          echo $deployment_info | jq --color-output
+          echo "deploymentHostName="$deploymentHostName"" >> $GITHUB_ENV
+          echo "deploymentHostName=$deploymentHostName"
 
           echo "build various values"
 
@@ -67,72 +108,59 @@ jobs:
           echo "commit_message="$commit_message""
 
           echo "build commit_sha_short"
-          commit_sha_short=$(echo '${{github.event.deployment.sha}}' | cut -c-7)
+          commit_sha_short=$(echo '${{github.sha}}' | cut -c-7)
           echo "commit_sha_short="$commit_sha_short""
 
           echo "build commit_ref"
           commit_ref=$(echo $commit_ref | jq -r ".meta.githubCommitRef")
           echo "commit_ref="$commit_ref""
-
-          echo "build commit_pr_number"
-          commit_pr_number=$(echo $deployment_info | jq -r ".meta.githubPrId")
           
-          if [[ "${commit_pr_number}" == "null" ]]; then
-            unset commit_pr_number 
+          if [ "$commitPullRequestNumber" == "null" ]; then
+            unset commitPullRequestNumber 
           fi
           
-          echo "commit_pr_number="$commit_pr_number""
-
-          echo "build app_name"
-          app_name=$(echo $deployment_info | jq -r ".name")
-          echo "app_name="$app_name""
-
-          echo "build vercel_inspector_url"
-          vercel_inspector_url=$(echo $deployment_info | jq -r ".inspectorUrl")
-          echo "vercel_inspector_url="$vercel_inspector_url""
-
-          if [ '${{github.event.deployment_status.environment}}' == "Production" ]; then
+          if [ "$isProduction" == 'true' ]; then
             #feed-pdp-deployments
-            slack_channel='C033BSD1YSE' 
+            slackChannel='C033BSD1YSE' 
           else
             #feed-pdp-deployments-preview
-            slack_channel='C033EL7UMS6'
+            slackChannel='C033EL7UMS6'
           fi
 
-          if [ -z $commit_pr_number ]; then
+          if [ -z $commitPullRequestNumber ]; then
             pull_request_slack_message_part="(not part of an open PR)"
           else
-            pull_request_slack_message_part="from pull request <https://github.com/${{github.repository}}/pull/${commit_pr_number}|#${commit_pr_number}>"
+            pull_request_slack_message_part="from pull request <https://github.com/${{github.repository}}/pull/${commitPullRequestNumber}|#${commitPullRequestNumber}>"
           fi
           
-          echo "build slack_text"
-          slack_text=$(cat <<EOF
-            🚀  *${app_name}*
-            Commit <https://github.com/${{github.repository}}/commit/${{github.event.deployment.sha}}|${commit_sha_short}> by <https://github.com/${commit_author_login}|${commit_author_display_name}> ${pull_request_slack_message_part} was successfully deployed.
+          echo "build slackText"
+          slackText=$(cat <<EOF
+            🚀  *${appName}*
+            Commit <https://github.com/${{github.repository}}/commit/${{github.sha}}|${commit_sha_short}> by <https://github.com/${commit_author_login}|${commit_author_display_name}> ${pull_request_slack_message_part} was successfully deployed.
             ${commit_message}
-            →  <https://${deployment_hostname}|View Deployment>
-            →  <${vercel_inspector_url}|Inspect deployment on Vercel>
+            →  <https://${deploymentHostName}|View Deployment>
+            →  <${deploymentInspectorUrl}|Inspect deployment>
           EOF
           )
 
-          echo "build slack_payload"
-          slack_payload=$(jq \
+          echo "build slackPayload"
+          slackPayload=$(jq \
             --null-input \
-            --arg slack_channel "$slack_channel" \
-            --arg slack_text "$slack_text" \
+            --arg slackChannel "$slackChannel" \
+            --arg slackText "$slackText" \
             '
               {
-                "channel": $slack_channel,
+                "channel": $slackChannel,
                 "unfurl_links": false,
                 "unfurl_media": false,
                 "blocks": [
-                  { "type": "section", "text": { "type": "mrkdwn", "text": $slack_text }}
+                  { "type": "section", "text": { "type": "mrkdwn", "text": $slackText }}
                 ]
               }
             ' \
           )
-          echo "slack_payload="$slack_payload"" >> $GITHUB_ENV
-          echo "$slack_payload" | jq --color-output
+          echo "SLACK_PAYLOAD="$slackPayload"" >> $GITHUB_ENV
+          echo "$slackPayload" | jq --color-output
       - name: Write message to Slack channel
         run: |
           curl \
@@ -141,5 +169,5 @@ jobs:
             --request POST \
             --header "Content-type: application/json" \
             --header "Authorization: Bearer ${{secrets.slackToken}}" \
-            --data '${{env.slack_payload}}' \
+            --data '${{env.SLACK_PAYLOAD}}' \
             https://slack.com/api/chat.postMessage | jq --color-output
