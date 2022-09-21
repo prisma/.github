@@ -51,10 +51,12 @@ jobs:
 
           # We cut away the `https://` to get the hostname
           # In some cases, like act CLI, there is no HTTPS prefix.
-          if [[ "${{inputs.url}}" == https://* ]]; then
-            deploymentHostName=$(echo "${{inputs.url}}" | cut -c 9-)
+          if [[ '${{inputs.url}}' == https://* ]]; then
+            echo "inputs.url has https prefix"
+            deploymentHostName=$(echo '${{inputs.url}}' | cut -c 9-)
           else
-            deploymentHostName="${{inputs.url}}"
+            echo "inputs.url has no https prefix"
+            deploymentHostName='${{inputs.url}}'
           fi
           echo "deploymentHostName="$deploymentHostName"" >> $GITHUB_ENV
           echo "deploymentHostName=$deploymentHostName"
