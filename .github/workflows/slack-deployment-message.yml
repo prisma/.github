@@ -27,6 +27,8 @@ jobs:
         run: npx @bahmutov/print-env GITHUB
       - name: Build Slack Payload
         run: |
+          # TODO get this from the repository default branch setting.
+          trunkBranchName='main'
           if [ '${{inputs.production}}' == "true" ]; then
             isProduction='true'
           elif [ '${{github.ref}}' == "$trunkBranchName" ]; then
