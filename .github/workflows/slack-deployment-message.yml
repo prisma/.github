@@ -115,7 +115,7 @@ jobs:
           commit_ref=$(echo $commit_ref | jq -r ".meta.githubCommitRef")
           echo "commit_ref="$commit_ref""
           
-          if [[ "${commitPullRequestNumber}" == "null" ]]; then
+          if [ "$commitPullRequestNumber" == "null" ]; then
             unset commitPullRequestNumber 
           fi
           
