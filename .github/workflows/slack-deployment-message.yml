@@ -8,8 +8,8 @@ on:
         type: string
         required: true
       production:
-        description: Is this a production deployment? If it is, a specific slack channel is used. By default is true when branch is trunk.
-        type: boolean
+        description: Is this a production deployment? If it is, a specific slack channel is used. By default is true when branch is trunk. Accepts "true" or "false".
+        type: string
         required: false
     secrets:
       vercelToken:
@@ -29,12 +29,18 @@ jobs:
         run: |
           # TODO get this from the repository default branch setting.
           trunkBranchName='main'
-          if [ '${{inputs.production}}' == 'true' ]; then
-            isProduction='true'
-          elif [ '${{github.ref}}' == "$trunkBranchName" ]; then
-            isProduction='true'
-          else
-            isProduction='false'
+          # On push event github.ref will be "refs/heads/${branchName}"
+          # On pull_request event closed type github.ref will be "${branchName}" of the branch being merged into.
+          if [ '${{inputs.production}}' == '' ]; then
+            if [ '${{github.ref}}' == "$trunkBranchName" ]; then
+              isProduction='true'
+            elif [ '${{github.ref}}' == "refs/heads/$trunkBranchName" ]; then
+              isProduction='true'
+            else
+              isProduction='false'
+            fi
+          else 
+            isProduction='${{inputs.production}}'
           fi
           echo "isProduction="$isProduction""
           
