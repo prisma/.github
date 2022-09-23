@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print GitHub Context Data 🖨
-        run: echo '${{toJson(github)}}' | jq --color-output
+        env:
+          GITHUB_CONTEXT_JSON: ${{toJson(github)}}
+        run: echo "$GITHUB_CONTEXT_JSON" | jq --color-output || true
       - name: Print GitHub Environment variables 🖨
         run: npx @bahmutov/print-env GITHUB
