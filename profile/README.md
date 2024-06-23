@@ -57,6 +57,19 @@ You can learn more about Prisma and its rich ecosystem and community with these 
 
 </details>
 
+## Badges
+
+[![Made with Prisma](http://made-with.prisma.io/dark.svg)](https://prisma.io) [![Made with Prisma](http://made-with.prisma.io/indigo.svg)](https://prisma.io)
+
+Built something awesome with Prisma? 🌟 Show it off with these [badges](https://github.com/prisma/presskit?tab=readme-ov-file#badges), perfect for your readme or website.
+
+```
+[![Made with Prisma](http://made-with.prisma.io/dark.svg)](https://prisma.io)
+```
+
+```
+[![Made with Prisma](http://made-with.prisma.io/indigo.svg)](https://prisma.io)
+```
 
 ## 🤝 Join us
 
