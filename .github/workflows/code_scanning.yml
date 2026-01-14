@@ -1,0 +1,46 @@
+name: Code Scanning
+
+on:
+  workflow_call:
+
+jobs:
+  semgrep_scan:
+    # User definable name of this GitHub Actions job.
+    name: semgrep/ci
+    # If you are self-hosting, change the following `runs-on` value:
+    runs-on: ubuntu-latest
+    container:
+      # A Docker image with Semgrep installed. Do not change this.
+      image: semgrep/semgrep
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
+    permissions:
+      pull-requests: write # Required for reviewdog to post comments
+      contents: read
+
+    steps:
+      # Fetch project source with GitHub Actions Checkout.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Perform Semgrep Analysis
+        run: semgrep scan --severity ERROR --error --sarif --config auto . --output=semgrep-results.sarif --baseline-commit ${{ github.event.pull_request.base.sha }}
+      - name: Save SARIF results as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results.sarif
+          path: semgrep-results.sarif
+
+      - name: Run Reviewdog
+        if: always()
+        uses: reviewdog/action-setup@v1
+
+      - name: Post SARIF to PR
+        if: always()
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
