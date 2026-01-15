@@ -40,7 +40,7 @@ jobs:
           name: semgrep-results.sarif
           path: semgrep-results.sarif
 
-      - name: Run Reviewdog
+      - name: Setup Reviewdog
         if: always()
         uses: reviewdog/action-setup@v1
 
