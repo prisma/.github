@@ -41,7 +41,7 @@ jobs:
           path: semgrep-results.sarif
 
       - name: Setup Reviewdog
-        if: always()
+        if: always() && github.event.pull_request != null
         uses: reviewdog/action-setup@v1
 
       - name: Post SARIF to PR
