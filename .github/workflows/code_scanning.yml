@@ -26,7 +26,13 @@ jobs:
           fetch-depth: 0
 
       - name: Perform Semgrep Analysis
-        run: semgrep scan --severity ERROR --error --sarif --config auto . --output=semgrep-results.sarif --baseline-commit ${{ github.event.pull_request.base.sha }}
+        run: |
+          BASELINE_ARG=""
+          if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
+            BASELINE_ARG="--baseline-commit ${{ github.event.pull_request.base.sha }}"
+          fi
+          semgrep scan --severity ERROR --error --sarif --config auto . --output=semgrep-results.sarif $BASELINE_ARG
+
       - name: Save SARIF results as artifact
         if: always()
         uses: actions/upload-artifact@v6
