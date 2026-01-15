@@ -1,3 +1,4 @@
+# Workflow for automated code scanning using Semgrep to detect security vulnerabilities and code quality issues.
 name: Code Scanning
 
 on:
@@ -5,27 +6,25 @@ on:
 
 jobs:
   semgrep_scan:
-    # User definable name of this GitHub Actions job.
     name: semgrep/ci
-    # If you are self-hosting, change the following `runs-on` value:
     runs-on: ubuntu-latest
     container:
-      # A Docker image with Semgrep installed. Do not change this.
       image: semgrep/semgrep:1.147.0
     # Skip any PR created by dependabot to avoid permission issues:
     if: (github.actor != 'dependabot[bot]')
     permissions:
-      pull-requests: write # Required for reviewdog to post comments
-      contents: read
+      pull-requests: write # Permission for reviewdog to post comments
+      contents: read # Permission to read repository contents for scanning
 
     steps:
-      # Fetch project source with GitHub Actions Checkout.
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Required to scan git diff/history
 
       - name: Perform Semgrep Analysis
+        # Run Semgrep scan to detect security issues and code quality problems, outputting SARIF format
+        continue-on-error: true  # Temporarily continue on error.
         run: |
           BASELINE_ARG=""
           if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
@@ -34,6 +33,7 @@ jobs:
           semgrep scan --severity ERROR --error --sarif --config auto . --output=semgrep-results.sarif $BASELINE_ARG
 
       - name: Save SARIF results as artifact
+        # Upload SARIF file as artifact for later retrieval or integration with GitHub Advanced Security
         if: always() && github.event.pull_request != null
         uses: actions/upload-artifact@v6
         with:
@@ -45,6 +45,7 @@ jobs:
         uses: reviewdog/action-setup@v1
 
       - name: Post SARIF to PR
+        # Use Reviewdog to post Semgrep findings as comments on the pull request
         if: always() && github.event.pull_request != null
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
