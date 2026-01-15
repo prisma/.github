@@ -24,7 +24,7 @@ jobs:
 
       - name: Perform Semgrep Analysis
         # Run Semgrep scan to detect security issues and code quality problems, outputting SARIF format
-        continue-on-error: true  # Temporarily continue on error.
+        continue-on-error: true  # Temporarily continue on error during testing phase
         run: |
           BASELINE_ARG=""
           if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
@@ -34,7 +34,7 @@ jobs:
 
       - name: Save SARIF results as artifact
         # Upload SARIF file as artifact for later retrieval or integration with GitHub Advanced Security
-        if: always() && github.event.pull_request != null
+        if: always() && github.event.pull_request != null && hashFiles('semgrep-results.sarif') != ''
         uses: actions/upload-artifact@v6
         with:
           name: semgrep-results.sarif
@@ -46,12 +46,8 @@ jobs:
 
       - name: Post SARIF to PR
         # Use Reviewdog to post Semgrep findings as comments on the pull request
-        if: always() && github.event.pull_request != null
+        if: always() && github.event.pull_request != null && hashFiles('semgrep-results.sarif') != ''
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -f semgrep-results.sarif ]; then
-            cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
-          else
-            echo "SARIF file not found, skipping reviewdog posting"
-          fi
+          cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
