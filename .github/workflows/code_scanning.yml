@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       # A Docker image with Semgrep installed. Do not change this.
-      image: semgrep/semgrep
+      image: semgrep/semgrep:1.147.0
     # Skip any PR created by dependabot to avoid permission issues:
     if: (github.actor != 'dependabot[bot]')
     permissions:
@@ -43,4 +43,8 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
+          if [ -f semgrep-results.sarif ]; then
+           cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
+          else
+            echo "SARIF file not found, skipping reviewdog posting"
+          fi
