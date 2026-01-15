@@ -50,7 +50,7 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f semgrep-results.sarif ]; then
-           cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
+            cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
           else
             echo "SARIF file not found, skipping reviewdog posting"
           fi
