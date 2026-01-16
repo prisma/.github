@@ -13,8 +13,8 @@ jobs:
     # Skip any PR created by dependabot to avoid permission issues:
     if: (github.actor != 'dependabot[bot]')
     permissions:
-      pull-requests: write # Permission for reviewdog to post comments
-      contents: read # Permission to read repository contents for scanning
+      contents: read # Permission to read repository contents
+      pull-requests: write # Permission for posting comments
 
     steps:
       - name: Checkout repository
