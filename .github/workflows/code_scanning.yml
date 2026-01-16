@@ -1,0 +1,53 @@
+# Workflow for automated code scanning using Semgrep to detect security vulnerabilities and code quality issues.
+name: Code Scanning
+
+on:
+  workflow_call:
+
+jobs:
+  semgrep_scan:
+    name: semgrep/ci
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep:1.147.0
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
+    permissions:
+      pull-requests: write # Permission for reviewdog to post comments
+      contents: read # Permission to read repository contents for scanning
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Required to scan git diff/history
+
+      - name: Perform Semgrep Analysis
+        # Run Semgrep scan to detect security issues and code quality problems, outputting SARIF format
+        continue-on-error: true  # Temporarily continue on error during testing phase
+        run: |
+          BASELINE_ARG=""
+          if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
+            BASELINE_ARG="--baseline-commit ${{ github.event.pull_request.base.sha }}"
+          fi
+          semgrep scan --severity ERROR --error --sarif --config auto . --output=semgrep-results.sarif $BASELINE_ARG
+
+      - name: Save SARIF results as artifact
+        # Upload SARIF file as artifact for later retrieval or integration with GitHub Advanced Security
+        if: always() && github.event.pull_request != null && hashFiles('semgrep-results.sarif') != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: semgrep-results.sarif
+          path: semgrep-results.sarif
+
+      - name: Setup Reviewdog
+        if: always() && github.event.pull_request != null
+        uses: reviewdog/action-setup@v1
+
+      - name: Post SARIF to PR
+        # Use Reviewdog to post Semgrep findings as comments on the pull request
+        if: always() && github.event.pull_request != null && hashFiles('semgrep-results.sarif') != ''
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat semgrep-results.sarif | reviewdog -f=sarif -reporter=github-pr-review
