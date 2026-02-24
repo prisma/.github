@@ -24,7 +24,6 @@ jobs:
 
       - name: Perform Semgrep Analysis
         # Run Semgrep scan to detect security issues and code quality problems, outputting SARIF format
-        continue-on-error: true  # Temporarily continue on error during testing phase
         run: |
           BASELINE_ARG=""
           if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
