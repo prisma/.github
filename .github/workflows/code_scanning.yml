@@ -8,8 +8,6 @@ jobs:
   semgrep_scan:
     name: semgrep/ci
     runs-on: ubuntu-latest
-    container:
-      image: semgrep/semgrep:1.147.0
     # Skip any PR created by dependabot to avoid permission issues:
     if: (github.actor != 'dependabot[bot]')
     permissions:
@@ -21,6 +19,9 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0 # Required to scan git diff/history
+
+      - name: Install Semgrep
+        run: pipx install semgrep==1.147.0
 
       - name: Perform Semgrep Analysis
         # Run Semgrep scan to detect security issues and code quality problems, outputting SARIF format
