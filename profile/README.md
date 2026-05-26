@@ -20,12 +20,8 @@ Prisma makes working with data easy! Explore our suite of tools:
 - [Prisma ORM](https://github.com/prisma/prisma?utm_source=github&utm_medium=org_readme): Next-generation Node.js and TypeScript ORM, supporting PostgreSQL, MySQL, MariaDB, SQL Server, SQLite, CockroachDB, and MongoDB.
 - [Prisma Postgres](https://www.prisma.io/postgres?utm_source=github&utm_medium=org_readme): Instant PostgreSQL database for global applications
 - [Prisma Accelerate](https://prisma.io/docs/data-platform/accelerate?utm_source=github&utm_medium=org_readme): Global database cache with scalable connection pooling.
-- [Prisma Optimize](https://www.prisma.io/docs/optimize?utm_source=github&utm_medium=org_readme): AI-powered query optimization and performance insights.
 - [Prisma Studio](https://www.prisma.io/docs/orm/tools/prisma-studio?utm_source=github&utm_medium=org_readme): A visual editor for the data in your database. 
 - More coming soon, stay tuned 👀
-
-Prisma is leading the way in the Data DX category to promote simplicity in data-driven application development. Learn more in the [Data DX manifesto](https://www.datadx.io/?utm_source=github&utm_medium=org_readme).
-
 
 ## 🎁 Repositories
 
@@ -76,5 +72,4 @@ Built something awesome with Prisma? 🌟 Show it off with these [badges](https:
 ## 🤝 Join us
 
 We are hiring across all teams; check out our [**Careers**](https://www.prisma.io/careers) page and join us!
-
 
