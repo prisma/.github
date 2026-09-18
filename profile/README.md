@@ -46,7 +46,7 @@ Please join the [Prisma Community](https://www.prisma.io/community); we're happy
 You can reach out to us via various channels:
 
 - [Follow us on Twitter](https://pris.ly/x?utm_source=github&utm_medium=org_readme) to never miss any updates from the Prisma team, ecosystem & community
-- Join us on [Discord](http://pris.ly/discord?utm_source=github&utm_medium=org_readme) to be a part of our community, showcase your work, and connect with other Prisma developers.
+- Join us on [Discord](https://pris.ly/discord?utm_source=github&utm_medium=org_readme) to be a part of our community, showcase your work, and connect with other Prisma developers.
 - [Ask a question](https://github.com/prisma/orm/discussions) on GitHub Discussions
 
 ### 📚 Resources
