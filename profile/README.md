@@ -18,7 +18,7 @@
 Prisma provides the infrastructure your agent can drive:
 
 - [Prisma ORM 8](https://github.com/prisma/orm?utm_source=github&utm_medium=org_readme): Agent-first ORM written in TypeScript, supporting PostgreSQL and MongoDB. Support for more databases are coming.
-- [Prisma Compute](https://www.prisma.io/docs/compute?utm_source=github&utm_medium=org_readme): Deploy and host TypeScript apps with Prisma Postgres, plus app previews and branches for every PR.
+- [Prisma Compute](https://www.prisma.io/docs/compute?utm_source=github&utm_medium=org_readme): Deploy and host TypeScript apps with Prisma Postgres included, plus app previews and branches for every PR.
 - [Prisma Postgres](https://www.prisma.io/docs/postgres?utm_source=github&utm_medium=org_readme): Instant PostgreSQL database for global applications
 - [Prisma Studio](https://www.prisma.io/docs/orm/tools/prisma-studio?utm_source=github&utm_medium=org_readme): A visual editor for the data in your database.
 
