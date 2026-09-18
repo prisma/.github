@@ -29,11 +29,19 @@ This GitHub organization contains repos that are _officially_ maintained by [Pri
 - The Prisma ORM can be found in the main [`prisma/orm`](https://github.com/prisma/orm) repo.
 - The [documentation](https://www.prisma.io/docs) for all Prisma products is located in the [`prisma/web`](https://github.com/prisma/web) repo.
 
-## Deploy your app to Compute
+## 🚀 Deploy your app to Compute
 
-Built a project using Prisma? Deploy it to Prisma Compute.
+[![Deploy with Prisma](https://raw.githubusercontent.com/prisma/.github/main/profile/deploy-button-dark.svg)](https://console.prisma.io/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fprisma%2Fcompute-deploy-example&utm_source=github-org-readme) [![Deploy with Prisma](https://raw.githubusercontent.com/prisma/.github/main/profile/deploy-button-light.svg)](https://console.prisma.io/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fprisma%2Fcompute-deploy-example&utm_source=github-org-readme)
 
-Visit the [Compute button generator](https://www.prisma.io/docs/compute/deploy-button?utm_source=github&utm_medium=org_readme) to create a deploy button for your README or website.
+Built a project using Prisma? Deploy it to Prisma Compute. Add one of the buttons below to your README or website, replacing `owner/repo` with your public GitHub repository, or use the [Compute button generator](https://www.prisma.io/docs/compute/deploy-button?utm_source=github&utm_medium=org_readme).
+
+```
+[![Deploy with Prisma](https://raw.githubusercontent.com/prisma/.github/main/profile/deploy-button-dark.svg)](https://console.prisma.io/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fowner%2Frepo&utm_source=github-readme)
+```
+
+```
+[![Deploy with Prisma](https://raw.githubusercontent.com/prisma/.github/main/profile/deploy-button-light.svg)](https://console.prisma.io/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fowner%2Frepo&utm_source=github-readme)
+```
 
 ## 💚 Community
 
